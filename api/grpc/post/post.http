@@ -1,0 +1,11 @@
+GRPC http://localhost:8080/post.PostStorage/CreatePost
+
+{
+  "post": {
+    "caption": "test text",
+    "images": [
+      "test-image-1",
+      "test-image-2"
+    ]
+  }
+}
