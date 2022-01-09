@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	postService "github.com/ehsundar/insta/api/grpc/post"
 	postPb "github.com/ehsundar/insta/pkg/api/grpc/post"
 	_ "github.com/lib/pq"
@@ -14,7 +15,7 @@ import (
 
 func main() {
 	db, err := sql.Open("postgres",
-		"host=localhost port=5432 user=postgres password=postgres dbname=insta sslmode=disable")
+		"host=postgres port=5432 user=postgres password=postgres dbname=insta sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +28,7 @@ func main() {
 
 	postSvc := postService.NewService(postStorage)
 
-	lis, err := net.Listen("tcp", "localhost:8080")
+	lis, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -35,6 +36,8 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	postPb.RegisterPostStorageServer(grpcServer, postSvc)
+
+	fmt.Println("start server")
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		panic(err)
