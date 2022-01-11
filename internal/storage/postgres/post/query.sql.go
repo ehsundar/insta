@@ -32,14 +32,14 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 	return i, err
 }
 
-const deleteAuthor = `-- name: DeleteAuthor :exec
+const deletePost = `-- name: DeletePost :exec
 DELETE
 FROM post
 WHERE ident = $1
 `
 
-func (q *Queries) DeleteAuthor(ctx context.Context, ident int64) error {
-	_, err := q.db.ExecContext(ctx, deleteAuthor, ident)
+func (q *Queries) DeletePost(ctx context.Context, ident int64) error {
+	_, err := q.db.ExecContext(ctx, deletePost, ident)
 	return err
 }
 
@@ -70,6 +70,40 @@ ORDER BY created_at
 
 func (q *Queries) GetUserPosts(ctx context.Context) ([]Post, error) {
 	rows, err := q.db.QueryContext(ctx, getUserPosts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Post
+	for rows.Next() {
+		var i Post
+		if err := rows.Scan(
+			&i.Ident,
+			&i.Caption,
+			pq.Array(&i.Images),
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listPosts = `-- name: ListPosts :many
+SELECT ident, caption, images, created_at
+FROM post
+order by created_at
+`
+
+func (q *Queries) ListPosts(ctx context.Context) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, listPosts)
 	if err != nil {
 		return nil, err
 	}

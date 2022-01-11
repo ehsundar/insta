@@ -9,3 +9,11 @@ GRPC http://localhost:8080/post.PostStorage/CreatePost
     ]
   }
 }
+
+###
+GRPC http://localhost:8080/post.PostStorage/ListPosts
+
+{
+  "count": 10,
+  "last_item_ident": 0
+}

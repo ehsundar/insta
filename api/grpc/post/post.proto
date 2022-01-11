@@ -22,6 +22,17 @@ message CreatePostResponse {
     Post post = 1;
 }
 
+message ListPostsRequest {
+    int32 count = 1;
+    int64 last_item_ident = 2;
+}
+
+message ListPostsResponse {
+    repeated Post posts = 1;
+    int64 last_item_ident = 2;
+}
+
 service PostStorage {
     rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+    rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
 }

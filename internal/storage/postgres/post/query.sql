@@ -14,7 +14,12 @@ INSERT INTO post (caption, images)
 VALUES ($1, $2)
 RETURNING *;
 
--- name: DeleteAuthor :exec
+-- name: DeletePost :exec
 DELETE
 FROM post
 WHERE ident = $1;
+
+-- name: ListPosts :many
+SELECT *
+FROM post
+order by created_at;

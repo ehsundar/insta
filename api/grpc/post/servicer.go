@@ -30,3 +30,19 @@ func (s *service) CreatePost(ctx context.Context, request *post.CreatePostReques
 
 	return &post.CreatePostResponse{Post: DBToProto(&newPost)}, nil
 }
+
+func (s *service) ListPosts(ctx context.Context,
+	request *post.ListPostsRequest) (*post.ListPostsResponse, error) {
+
+	posts, err := s.storage.ListPosts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	protoPosts := make([]*post.Post, len(posts))
+	for i, p := range posts {
+		protoPosts[i] = DBToProto(&p)
+	}
+
+	return &post.ListPostsResponse{Posts: protoPosts}, nil
+}
