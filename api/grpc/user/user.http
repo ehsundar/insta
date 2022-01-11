@@ -1,0 +1,14 @@
+###
+GRPC localhost:8080/user.UserStorage/CreateUser
+
+{
+  "username": "ehsan",
+  "password": "pass"
+}
+
+###
+GRPC localhost:8080/user.UserStorage/GetUserByIdent
+
+{
+  "ident": 1
+}

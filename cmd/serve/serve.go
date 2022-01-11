@@ -3,14 +3,18 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	postService "github.com/ehsundar/insta/api/grpc/post"
-	postPb "github.com/ehsundar/insta/pkg/api/grpc/post"
-	_ "github.com/lib/pq"
-	"google.golang.org/grpc"
 	"log"
 	"net"
 
+	_ "github.com/lib/pq"
+	"google.golang.org/grpc"
+
+	postService "github.com/ehsundar/insta/api/grpc/post"
+	userService "github.com/ehsundar/insta/api/grpc/user"
 	"github.com/ehsundar/insta/internal/storage/postgres/post"
+	"github.com/ehsundar/insta/internal/storage/postgres/user"
+	postPb "github.com/ehsundar/insta/pkg/api/grpc/post"
+	userPb "github.com/ehsundar/insta/pkg/api/grpc/user"
 )
 
 func main() {
@@ -25,8 +29,10 @@ func main() {
 	}
 
 	postStorage := post.New(db)
+	userStorage := user.New(db)
 
 	postSvc := postService.NewService(postStorage)
+	userSvc := userService.NewService(userStorage)
 
 	lis, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
@@ -36,6 +42,7 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	postPb.RegisterPostStorageServer(grpcServer, postSvc)
+	userPb.RegisterUserStorageServer(grpcServer, userSvc)
 
 	fmt.Println("start server")
 	err = grpcServer.Serve(lis)
