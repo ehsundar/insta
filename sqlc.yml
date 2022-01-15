@@ -1,0 +1,7 @@
+version: 1
+packages:
+  - path: "internal/storage/postgres"
+    name: "postgres"
+    engine: "postgresql"
+    schema: "internal/storage/postgres/schema.sql"
+    queries: "internal/storage/postgres/query.sql"
