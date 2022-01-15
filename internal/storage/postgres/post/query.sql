@@ -23,3 +23,9 @@ WHERE ident = $1;
 SELECT *
 FROM post
 order by created_at;
+
+-- name: GetPostAndUser :one
+select p.*, "user".*
+from (select * from "post" where ident = $1) p
+         join "user" on "p".owner = "user".ident
+limit 1;
